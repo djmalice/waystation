@@ -38,9 +38,10 @@ Before running the project, ensure you have the following installed:
    python manage.py migrate
    ```
 
-5. Create a superuser to access the admin panel:
+5. Rename dummy .env.example file to .env and add openai api key:
    ```bash
-   python manage.py createsuperuser
+   mv .env.example .env
+   OPENAI_API_KEY=your-openai-api-key-here
    ```
 
 6. Run the development server:
