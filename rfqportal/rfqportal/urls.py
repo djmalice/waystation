@@ -2,6 +2,7 @@ from django.urls import path
 from compareapp.views import SupplierListView, SupplierDetailView, RFQListView, RFQDetailView, RFQQuotesView, SubmitQuoteEmailView, ProcessEmailView, CreateRFQView
 
 urlpatterns = [
+    path('',RFQListView.as_view(), name='home'),
     path('suppliers/', SupplierListView.as_view(), name='supplier-list'),
     path('suppliers/<int:pk>/', SupplierDetailView.as_view(), name='supplier-detail'),
     path('rfqs/', RFQListView.as_view(), name='rfq-list'),
