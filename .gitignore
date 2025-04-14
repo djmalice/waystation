@@ -17,3 +17,9 @@ venv/
 
 # macOS system files
 .DS_Store
+
+# SQLite database files
+*.sqlite
+*.sqlite3
+*.db
+*.db3
