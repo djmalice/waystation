@@ -78,3 +78,39 @@ def process_email_text(email_text, rfq):
     )
 
     return {"status": "success", "message": "Quote, Supplier, RFQ, and Email created successfully", "quote_id": quote.id}
+
+def check_missing_fields_and_generate_email(quote_id):
+    # Get the quote and related supplier
+    try:
+        quote = Quote.objects.get(id=quote_id)
+        supplier = quote.supplier
+    except Quote.DoesNotExist:
+        return {"status": "fail", "message": "Quote not found."}
+
+    # Define required fields and check for missing values
+    required_fields = {
+        "main_contact_name": supplier.main_contact_name,
+        "main_contact_email": supplier.main_contact_email,
+        "main_contact_phone": supplier.main_contact_phone,
+        "hq_address": supplier.hq_address,
+        "payment_terms": supplier.payment_terms,
+        "date_submitted": quote.date_submitted,
+        "price_per": quote.price_per,
+        "country_of_origin": quote.country_of_origin,
+        "certifications": quote.certifications,
+        "minimum_order_quantity": quote.minimum_order_quantity,
+    }
+
+    missing_fields = {field: value for field, value in required_fields.items() if not value}
+
+    if not missing_fields:
+        return {"status": "success", "message": "No missing fields."}
+
+    # Generate email draft
+    email_body = f"Dear {supplier.company_name},\n\n"
+    email_body += "We noticed that some information is missing from your quote. Could you please provide the following details?\n\n"
+    for field in missing_fields:
+        email_body += f"- {field.replace('_', ' ').capitalize()}\n"
+    email_body += "\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Company Name]"
+
+    return {"status": "missing", "email_body": email_body}

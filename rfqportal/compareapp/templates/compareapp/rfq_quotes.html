@@ -47,29 +47,107 @@
         <table class="table table-striped table-hover shadow-sm">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Supplier</th>
-                    <th>Date Submitted</th>
-                    <th>Price per</th>
-                    <th>Country of Origin</th>
-                    <th>Certifications</th>
-                    <th>Minimum Order Quantity</th>
+                    {% for quote in quotes %}
+                    <th>Supplier {{ forloop.counter }}</th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for quote in quotes %}
                 <tr>
+                    <td>ID</td>
+                    {% for quote in quotes %}
                     <td>{{ quote.id }}</td>
-                    <td>{{ quote.supplier.company_name }}</td>
-                    <td>{{ quote.date_submitted }}</td>
-                    <td>{{ quote.price_per }}</td>
-                    <td>{{ quote.country_of_origin }}</td>
-                    <td>{{ quote.certifications }}</td>
-                    <td>{{ quote.minimum_order_quantity }}</td>
+                    {% endfor %}
                 </tr>
-                {% endfor %}
+                <tr>
+                    <td>Supplier</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.supplier.company_name }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Main Contact Name</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.supplier.main_contact_name }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>HQ Address</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.supplier.hq_address }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Payment Terms</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.supplier.payment_terms }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Date Submitted</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.date_submitted }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Price per</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.price_per }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Country of Origin</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.country_of_origin }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Certifications</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.certifications }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Minimum Order Quantity</td>
+                    {% for quote in quotes %}
+                    <td>{{ quote.minimum_order_quantity }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Actions</td>
+                    {% for quote in quotes %}
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="generateEmail({{ quote.id }})">Check Missing Fields</button>
+                        <textarea id="email-draft-{{ quote.id }}" class="form-control mt-2" rows="5" readonly placeholder="Generated email will appear here..."></textarea>
+                    </td>
+                    {% endfor %}
+                </tr>
             </tbody>
         </table>
     </div>
+    <script>
+        function generateEmail(quoteId) {
+            fetch(`/generate-email/${quoteId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'missing') {
+                    document.getElementById(`email-draft-${quoteId}`).value = data.email_body;
+                } else if (data.status === 'success') {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while generating the email.');
+            });
+        }
+    </script>
 </body>
 </html>

@@ -4,7 +4,7 @@ from django.views import View
 from .models import Supplier, RFQ
 from django.forms.models import model_to_dict
 import json
-from .services import get_quotes_for_rfq, send_quote_email, process_email_text
+from .services import get_quotes_for_rfq, send_quote_email, process_email_text, check_missing_fields_and_generate_email
 from .forms import RFQForm
 
 class SupplierListView(View):
@@ -117,3 +117,8 @@ class CreateRFQView(View):
             form.save()
             return redirect('rfq-list')
         return render(request, 'compareapp/create_rfq.html', {'form': form, 'errors': form.errors})
+
+class GenerateEmailView(View):
+    def post(self, request, pk):
+        result = check_missing_fields_and_generate_email(pk)
+        return JsonResponse(result)
