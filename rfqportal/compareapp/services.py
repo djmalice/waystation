@@ -1,11 +1,32 @@
+# Import necessary modules and models
 from .models import Supplier, RFQ, Quote, Email
 from .llm_services import extract_email_data
 import json
 
+# Define service functions for supplier operations
 def create_supplier(data):
+    """
+    Create a new supplier.
+
+    Args:
+        data (dict): Data for creating the supplier.
+
+    Returns:
+        Supplier: The created supplier object.
+    """
     return Supplier.objects.create(**data)
 
 def update_supplier(pk, data):
+    """
+    Update an existing supplier.
+
+    Args:
+        pk (int): Primary key of the supplier to update.
+        data (dict): Data for updating the supplier.
+
+    Returns:
+        Supplier: The updated supplier object.
+    """
     supplier = Supplier.objects.get(pk=pk)
     for field, value in data.items():
         setattr(supplier, field, value)
@@ -13,13 +34,39 @@ def update_supplier(pk, data):
     return supplier
 
 def delete_supplier(pk):
+    """
+    Delete a supplier.
+
+    Args:
+        pk (int): Primary key of the supplier to delete.
+    """
     supplier = Supplier.objects.get(pk=pk)
     supplier.delete()
 
+# Define service functions for RFQ operations
 def create_rfq(data):
+    """
+    Create a new RFQ.
+
+    Args:
+        data (dict): Data for creating the RFQ.
+
+    Returns:
+        RFQ: The created RFQ object.
+    """
     return RFQ.objects.create(**data)
 
 def update_rfq(pk, data):
+    """
+    Update an existing RFQ.
+
+    Args:
+        pk (int): Primary key of the RFQ to update.
+        data (dict): Data for updating the RFQ.
+
+    Returns:
+        RFQ: The updated RFQ object.
+    """
     rfq = RFQ.objects.get(pk=pk)
     for field, value in data.items():
         setattr(rfq, field, value)
@@ -27,20 +74,55 @@ def update_rfq(pk, data):
     return rfq
 
 def delete_rfq(pk):
+    """
+    Delete an RFQ.
+
+    Args:
+        pk (int): Primary key of the RFQ to delete.
+    """
     rfq = RFQ.objects.get(pk=pk)
     rfq.delete()
 
+# Define service functions for quote operations
 def get_quotes_for_rfq(rfq_id):
+    """
+    Retrieve all quotes for a specific RFQ.
+
+    Args:
+        rfq_id (int): ID of the RFQ.
+
+    Returns:
+        list: List of quotes for the RFQ.
+    """
     quotes = Quote.objects.filter(rfq_id=rfq_id).values()
     return list(quotes)
 
 def send_quote_email(rfq_id, email):
+    """
+    Send an email related to a quote.
+
+    Args:
+        rfq_id (int): ID of the RFQ.
+        email (str): Email content to send.
+
+    Returns:
+        str: Status message.
+    """
     # Logic to send email (e.g., using Django's EmailMessage)
     # For now, return a placeholder status
     return "Email sent successfully"
 
 def process_email_text(email_text, rfq):
-    # Simulate LLM processing (replace with actual LLM API call)
+    """
+    Process email text and extract data.
+
+    Args:
+        email_text (str): The email content.
+        rfq (RFQ): The RFQ object related to the email.
+
+    Returns:
+        dict: Status and message of the processing result.
+    """
     extracted_data = extract_email_data(email_text)
 
     if extracted_data is None:
@@ -71,7 +153,7 @@ def process_email_text(email_text, rfq):
         minimum_order_quantity=extracted_data_dict["minimum_order_quantity"]
     )
 
-    email = Email.objects.create(
+    Email.objects.create(
         related_quote=quote,
         extracted_data=json.dumps(extracted_data_dict),  # Store as JSON string
         content=email_text
@@ -80,6 +162,15 @@ def process_email_text(email_text, rfq):
     return {"status": "success", "message": "Quote, Supplier, RFQ, and Email created successfully", "quote_id": quote.id}
 
 def check_missing_fields_and_generate_email(quote_id):
+    """
+    Check for missing fields in a quote and generate an email draft.
+
+    Args:
+        quote_id (int): ID of the quote to check.
+
+    Returns:
+        dict: Status and email draft or error message.
+    """
     # Get the quote and related supplier
     try:
         quote = Quote.objects.get(id=quote_id)
