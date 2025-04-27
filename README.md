@@ -63,5 +63,20 @@ To run the test suite, use the following command:
 python manage.py test
 ```
 
+## Database Information
+The project uses SQLite as the default database. SQLite is a lightweight, file-based database that requires no additional setup. The database file is located at `db.sqlite3` in the project directory.
+
+To set up and apply database migrations, use the following commands:
+
+1. Make migrations (if you have made changes to the models):
+   ```bash
+   python manage.py makemigrations
+   ```
+
+2. Apply migrations to the database:
+   ```bash
+   python manage.py migrate
+   ```
+
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License.
