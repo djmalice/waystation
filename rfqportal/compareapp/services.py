@@ -97,21 +97,6 @@ def get_quotes_for_rfq(rfq_id):
     quotes = Quote.objects.filter(rfq_id=rfq_id).values()
     return list(quotes)
 
-def send_quote_email(rfq_id, email):
-    """
-    Send an email related to a quote.
-
-    Args:
-        rfq_id (int): ID of the RFQ.
-        email (str): Email content to send.
-
-    Returns:
-        str: Status message.
-    """
-    # Logic to send email (e.g., using Django's EmailMessage)
-    # For now, return a placeholder status
-    return "Email sent successfully"
-
 def process_email_text(email_text, rfq):
     """
     Process email text and extract data.

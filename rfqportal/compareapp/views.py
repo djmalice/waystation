@@ -5,7 +5,7 @@ from django.views import View
 from .models import Supplier, RFQ
 from django.forms.models import model_to_dict
 import json
-from .services import get_quotes_for_rfq, send_quote_email, process_email_text, check_missing_fields_and_generate_email
+from .services import get_quotes_for_rfq, process_email_text, check_missing_fields_and_generate_email
 from .forms import RFQForm
 
 # Define views for handling supplier-related operations
@@ -123,18 +123,6 @@ class SubmitQuoteEmailView(View):
         if result.get('status') == 'success':
             return redirect('rfq-list')
         return render(request, 'compareapp/submit_quote_email.html', {'rfq': rfq, 'error': 'Failed to process email content'})
-
-class ProcessEmailView(View):
-    """
-    View to process email content and extract data.
-    """
-    def get(self, request):
-        return render(request, 'compareapp/process_email.html')
-
-    def post(self, request):
-        email_text = request.POST.get('email_text')
-        result = process_email_text(email_text)
-        return JsonResponse(result)
 
 # Define views for creating RFQs
 class CreateRFQView(View):
