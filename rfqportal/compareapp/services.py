@@ -44,34 +44,37 @@ def process_email_text(email_text, rfq):
     extracted_data = extract_email_data(email_text)
 
     if extracted_data is None:
-        return {"status":"fail","message": "Failed to extract data from email."}
+        return {"status": "fail", "message": "Failed to extract data from email."}
+
+    # Convert Pydantic model to dictionary
+    extracted_data_dict = extracted_data.dict()
 
     # Parse extracted data and create or retrieve related objects
     supplier, _ = Supplier.objects.get_or_create(
-        company_name=extracted_data["supplier_company_name"],
+        company_name=extracted_data_dict["supplier_company_name"],
         defaults={
-            "main_contact_name": extracted_data["main_contact_name"],
-            "main_contact_email": extracted_data["main_contact_email"],
-            "main_contact_phone": extracted_data["main_contact_phone"],
-            "hq_address": extracted_data["hq_address"],
-            "payment_terms": extracted_data["payment_terms"]
+            "main_contact_name": extracted_data_dict["main_contact_name"],
+            "main_contact_email": extracted_data_dict["main_contact_email"],
+            "main_contact_phone": extracted_data_dict["main_contact_phone"],
+            "hq_address": extracted_data_dict["hq_address"],
+            "payment_terms": extracted_data_dict["payment_terms"]
         }
     )
 
     quote = Quote.objects.create(
         rfq=rfq,
         supplier=supplier,
-        date_submitted=extracted_data["date_submitted"],
-        price_per_pound=extracted_data["price_per_pound"],
-        country_of_origin=extracted_data["country_of_origin"],
-        certifications=",".join(extracted_data["certifications"]),
-        minimum_order_quantity=extracted_data["minimum_order_quantity"]
+        date_submitted=extracted_data_dict["date_submitted"],
+        price_per=extracted_data_dict["price_per"],
+        country_of_origin=extracted_data_dict["country_of_origin"],
+        certifications=",".join(extracted_data_dict["certifications"]),
+        minimum_order_quantity=extracted_data_dict["minimum_order_quantity"]
     )
 
     email = Email.objects.create(
         related_quote=quote,
-        extracted_data=extracted_data,
+        extracted_data=json.dumps(extracted_data_dict),  # Store as JSON string
         content=email_text
     )
 
-    return {"status":"success","message": "Quote, Supplier, RFQ, and Email created successfully", "quote_id": quote.id}
+    return {"status": "success", "message": "Quote, Supplier, RFQ, and Email created successfully", "quote_id": quote.id}

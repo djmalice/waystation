@@ -45,7 +45,7 @@ class QuoteModelTest(TestCase):
             rfq=self.rfq,
             supplier=self.supplier,
             date_submitted="2023-12-01",
-            price_per_pound=10.5,
+            price_per=10.5,
             country_of_origin="USA",
             certifications="ISO 9001",
             minimum_order_quantity=100
@@ -55,7 +55,7 @@ class QuoteModelTest(TestCase):
         self.assertEqual(self.quote.rfq, self.rfq)
         self.assertEqual(self.quote.supplier, self.supplier)
         self.assertEqual(self.quote.date_submitted, "2023-12-01")
-        self.assertEqual(self.quote.price_per_pound, 10.5)
+        self.assertEqual(self.quote.price_per, 10.5)
         self.assertEqual(self.quote.country_of_origin, "USA")
         self.assertEqual(self.quote.certifications, "ISO 9001")
         self.assertEqual(self.quote.minimum_order_quantity, 100)

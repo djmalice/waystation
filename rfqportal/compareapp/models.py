@@ -25,7 +25,7 @@ class Quote(models.Model):
     rfq = models.ForeignKey(RFQ, on_delete=models.CASCADE, related_name="rfqs")
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name="suppliers")
     date_submitted = models.DateField(null=True, blank=True)
-    price_per_pound = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    price_per = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     country_of_origin = models.CharField(max_length=255, null=True, blank=True)
     certifications = models.TextField(null=True, blank=True)  # List of certifications
     minimum_order_quantity = models.BigIntegerField(null=True, blank=True)
