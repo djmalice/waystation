@@ -7,6 +7,7 @@ The Waystation RFQ Portal is a Django-based web application designed to streamli
 - Process supplier emails to extract structured data
 - View and manage supplier details
 - Submit and review quotes
+- Generate email for missing quote details
 
 ## Prerequisites
 Before running the project, ensure you have the following installed:
