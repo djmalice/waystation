@@ -1,7 +1,8 @@
 from django.db import models
 
 class Supplier(models.Model):
-    company_name = models.CharField(max_length=255, primary_key=True)
+    id = models.AutoField(primary_key=True)  # Add an ID field as the primary key
+    company_name = models.CharField(max_length=255)
     main_contact_name = models.CharField(max_length=255, null=True, blank=True)
     main_contact_email = models.EmailField(null=True, blank=True)
     main_contact_phone = models.CharField(max_length=20, null=True, blank=True)
