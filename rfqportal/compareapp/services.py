@@ -1,6 +1,7 @@
 # Import necessary modules and models
 from .models import Supplier, RFQ, Quote, Email
 from .llm_services import extract_email_data
+from celery import shared_task
 import json
 
 # Define service functions for supplier operations
@@ -97,7 +98,8 @@ def get_quotes_for_rfq(rfq_id):
     quotes = Quote.objects.filter(rfq_id=rfq_id).values()
     return list(quotes)
 
-def process_email_text(email_text, rfq):
+@shared_task(bind=True)
+def process_email_text(self, email_text, rfq_id):
     """
     Process email text and extract data.
 
@@ -128,6 +130,7 @@ def process_email_text(email_text, rfq):
         }
     )
 
+    rfq = RFQ.objects.get(pk=rfq_id)
     quote = Quote.objects.create(
         rfq=rfq,
         supplier=supplier,
@@ -143,8 +146,6 @@ def process_email_text(email_text, rfq):
         extracted_data=json.dumps(extracted_data_dict),  # Store as JSON string
         content=email_text
     )
-
-    return {"status": "success", "message": "Quote, Supplier, RFQ, and Email created successfully", "quote_id": quote.id}
 
 def check_missing_fields_and_generate_email(quote_id):
     """
