@@ -55,12 +55,6 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>ID</td>
-                    {% for quote in quotes %}
-                    <td>{{ quote.id }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
                     <td>Supplier</td>
                     {% for quote in quotes %}
                     <td>{{ quote.supplier.company_name }}</td>
