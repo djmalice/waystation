@@ -1,0 +1,15 @@
+The architecture consists of Python Django ORM based web application. We make use of Django templates to show the UI. 
+
+The database used is sqlite. For production use-cases, we should use something more solid like postgres.
+
+This system should scale easily considering the use-cases. Future system scalability would depend upon the volume of buyers and suppliers that we get. 
+Current, system only represents a single buyer and their corresponding RFQ's and quotes. The expectation is that these don't go into 1000's. Even if they do they expire 
+and are no longer relevant. We would like to keep old RFQ's and quotes around for future data analysis. But otherwise, they could be disabled from user's view.
+
+If the number of buyers grows significantly, then we could consider database sharding. However, that is not expected to be in millions. Also, we don't expect all of the buyers
+to access the application simultaneously. 
+
+One part of the application that is slow is calls to LLM. Currently, it is run as sync call. I have a background process implementation on a separate branch 
+which makes use of celery workers and runs the LLM call as a background process. As the system scales, we can make use of a queue to publish all emails that need to be 
+tokenized and then get back the product details which can be a batch job. OpenAI has multiple API's around batching, streaming, realtime, etc and a variety of models to choose from. 
+We can consider taking advantage of these to lower costs and scale our system as we encounter different use-cases.
